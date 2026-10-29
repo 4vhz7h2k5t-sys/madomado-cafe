@@ -2,7 +2,7 @@
 
 ## Adopted direction
 
-A short, quiet welcome through an arched blue window, followed by a dissolve into the existing Hero window. Duration is about 4.65 seconds after the artwork loads. No audio, external media services, new packages or real 3D model are involved. The three approved raster illustrations are used in a WebGL 2.5D performance.
+A short, quiet, text-free welcome through a centered blue window with a shallow arch, followed by a dissolve into the existing Hero window. The initial copy and logo were removed in the mobile revision below. Duration is about 4.65 seconds after the artwork loads. No audio, external media services, new packages or real 3D model are involved. The three approved raster illustrations are used in a WebGL 2.5D performance.
 
 The base portrait remains fixed at the pixel/material level. Only soft masks around the eyes sample the blink/wink photographs. A shader produces small anatomically localized deformations for breathing, ears, paws, head tilt and pointer-responsive gaze. During a blink, the open-eye texture compresses before the closed-eye texture appears; clothing is never swapped between the three source images.
 
@@ -25,7 +25,7 @@ The blue arch echoes the Hero. On departure, its bounds animate to the real, rea
 - `?opening=off`, existing hash/deep links, nonzero page scroll, `?motion=reduce` and the system reduced-motion preference bypass the introduction.
 - Visible Skip button, Escape, Enter, Space, scrolling/navigation keys, wheel or touch scrolling can dismiss it.
 - Existing elements are temporarily inert; their previous states are restored on all termination paths. Focus remains in the welcome while it is active.
-- Hidden tab, resizing, preference change or GPU context loss also remove it.
+- Hidden tab, layout-width change, preference change or GPU context loss also remove it. Height-only changes keep the opening active so mobile browser chrome does not dismiss it.
 - Shader/image failures show the normal site. Image-loading deadline: 1.6 seconds; independent cleanup watchdog: 6.2 seconds.
 - Pixel ratio capped at 1.5; requestAnimationFrame and GPU resources are released on removal.
 - All assets are served locally and comply with the existing CSP/noindex.
@@ -61,3 +61,17 @@ Adopt: the portrait's organic fur, eyes and leather remain intact while the face
 - Actual public browser replay at desktop 1440×1000 and mobile 390×844 confirmed the animation and return to the original Hero. No horizontal overflow or console warnings/errors. The only remaining inert element is the original closed mobile navigation, as expected.
 - HTTP 200 confirmed; HTML robots meta and `X-Robots-Tag` retain `noindex, nofollow, noarchive`; original CSP remains present.
 - `production-desktop-*.png` and `production-mobile-*.png` are captures of the deployed site, including the mobile Hero after completion. Millisecond suffixes are capture times relative to navigation returning, not animation timestamps.
+
+
+## Text-free mobile revision — 2026-10-29
+
+User feedback: remove opening text and correct the mobile composition.
+
+- Removed all visible copy, wordmark and English labels from the opening. The icon-only skip button retains its accessible Japanese name and a 48×48px target.
+- Centered the mascot in both axes. Frame sizing preserves the source aspect ratio and fits both viewport dimensions using stable viewport height. Mobile margins are 12px; shallow rounded corners preserve the ears and paws that the former tall arch cropped.
+- Safe-area-aware skip placement; compact landscape layout; height-only resize no longer dismisses the welcome.
+- Preserved the eye animation, breathing and Hero handoff. Only `src/opening.js` and `src/opening.css` changed; Hero and all other section sources/assets remain byte-identical to `26222c2`.
+- Actual Chromium checks with viewport emulation: 320×568, 390×844, 844×390 and 1440×1000. No visible text in the overlay, no horizontal overflow, mascot fully framed, and automatic return to Hero with original inert states restored in all four sizes. No console errors/warnings.
+- Height changed from 844 to 760 at fixed width 390 during the opening: it remained active. Icon skip then dismissed it and restored the site.
+- `node --check src/opening.js`, `npm run check`, `npm run build`, and `git diff --check` passed.
+- `textless-*.png` are actual captures from this revision, including mobile Hero after completion. Physical iOS/Android browser testing was not performed.

@@ -50,7 +50,7 @@ export async function mountOpening() {
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-label', 'madomado cafeへようこそ');
-  overlay.innerHTML = `<div class="mm-opening-top"><img src="/images/logo.png" alt="madomado cafe" width="195" height="59"><span>RENTA STUDIO · UNOFFICIAL DEMO</span><button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ">スキップ <span aria-hidden="true">↗</span></button></div><div class="mm-opening-copy"><span class="mm-opening-kicker">A LITTLE HELLO FROM TOYOSAKA.</span><p>ようこそ、<br><em>窓の向こうへ。</em></p><span class="mm-opening-note">いい一日は、<br>小さな「こんにちは」から。</span></div><div class="mm-opening-frame"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div><div class="mm-opening-foot" aria-hidden="true"><span>GOOD FOOD, GOOD COMPANY.</span><span>MAKE YOURSELF AT HOME.</span></div><span class="mm-opening-light" aria-hidden="true"></span>`;
+  overlay.innerHTML = `<button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="m7 5 10 7-10 7Z"/><path d="M19 5v14"/></svg></button><div class="mm-opening-frame"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div><span class="mm-opening-light" aria-hidden="true"></span>`;
   const canvas = overlay.querySelector('canvas');
   const frame = overlay.querySelector('.mm-opening-frame');
   const gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power', preserveDrawingBuffer: false });
@@ -66,7 +66,10 @@ export async function mountOpening() {
   const onScroll = () => { if (scrollY > 4) finish(true); };
   const onPointer = e => { pointerX = e.clientX / innerWidth * 2 - 1; pointerY = e.clientY / innerHeight * 2 - 1; };
   const onVisibility = () => { if (document.hidden) finish(true); };
-  const onResize = () => finish(true);
+  const initialWidth = innerWidth;
+  // Mobile browser chrome changes height while scrolling. Only a layout-width
+  // change (including rotation) needs to interrupt the welcome.
+  const onResize = () => { if (Math.abs(innerWidth - initialWidth) > 2) finish(true); };
   function cleanup() {
     if (disposed) return;
     disposed = true;
@@ -87,8 +90,7 @@ export async function mountOpening() {
     const heroWindow = document.querySelector('.hero-window');
     const rect = heroWindow?.getBoundingClientRect();
     const handoff = gsap.timeline({ onComplete: cleanup }); animation = handoff;
-    handoff.to('.mm-opening-top', { opacity: 0, duration: .18 }, 0);
-    handoff.to('.mm-opening-copy, .mm-opening-foot', { opacity: 0, y: -12, duration: .35 }, 0);
+    handoff.to(skip, { opacity: 0, duration: .18 }, 0);
     if(rect && rect.width > 0) handoff.to(frame, { left: rect.left, top: rect.top, width: rect.width, height: rect.height, duration: .65, ease: 'power2.inOut' },0);
     handoff.to(overlay, { opacity: 0, duration: .68, ease: 'power2.inOut' }, .12);
   }
@@ -121,7 +123,6 @@ export async function mountOpening() {
     animation=gsap.timeline({ onComplete:()=>finish(false) });
     animation.to(state,{enter:1,tilt:.006,duration:1.15,ease:'power3.out'},0)
       .fromTo(frame,{y:32,scale:.975},{y:0,scale:1,duration:1.25,ease:'power3.out'},0)
-      .fromTo('.mm-opening-copy',{y:18,opacity:0},{y:0,opacity:1,duration:.85,ease:'power2.out'},.22)
       .to(state,{blink:1,duration:.095,ease:'power2.in'},1.05).to(state,{blink:0,duration:.16,ease:'power2.out'},1.145)
       .to(state,{tilt:-.018,duration:.7,ease:'sine.inOut'},1.5)
       .to(state,{winking:1,duration:.18,ease:'power2.inOut'},2.24).to(state,{winking:0,duration:.28,ease:'power2.out'},2.68)
