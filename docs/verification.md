@@ -32,3 +32,17 @@ Screenshots are retained in `docs/screenshots/`.
 ## Scope
 
 Responsive checks use emulated viewport sizes in Chromium, not physical iOS/Android devices. No live reservation or phone call was placed. Instagram login-gated dog rules were not guessed; the site links to the official guides and telephone. Actual system-level reduced-motion preference was not toggled; the explicit reduced-motion route exercises the same non-animated layout and the system media query is implemented separately.
+
+## Production verification
+
+- URL: https://madomado-cafe.ur24-jp.workers.dev/
+- Worker: `madomado-cafe`
+- Deployment version: `7b403ef3-ddd8-4e83-9d5f-b331988db7e9`.
+- Root response: HTTP 200; HTML meta noindex and explicit demo disclosure verified.
+- `X-Robots-Tag: noindex, nofollow, noarchive` verified on root and checked asset/error responses.
+- Security headers and CSP present.
+- `robots.txt`: HTTP 200 with `Disallow: /`.
+- Favicon: HTTP 200.
+- Unknown URL: genuine HTTP 404 with the custom Japanese error page.
+- Production Chromium: desktop 1440×1000 and mobile 390×844; no horizontal overflow or broken images; no console warnings/errors.
+- The no-JavaScript fallback was reinforced with explicit style precedence in the final deployment.
