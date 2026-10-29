@@ -1,3 +1,4 @@
+import { mountOpening } from './opening';
 import './style.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -159,3 +160,6 @@ document.fonts.ready.then(() => {
     if (target) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
   }
 });
+
+// An isolated welcome layer; the existing Hero and section animations stay unchanged.
+mountOpening();

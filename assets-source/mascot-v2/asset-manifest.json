@@ -1,0 +1,37 @@
+{
+  "asset_type": "AI-generated raster character look-development and static expression variations; NOT a 3D mesh",
+  "external_3d_job_submitted": false,
+  "external_3d_blocker": "Higgsfield returned Out of credits; user subsequently requested free-only work. No paid retry.",
+  "website_changed": false,
+  "animation_created": false,
+  "github_push": false,
+  "deployment": false,
+  "files": {
+    "sculpt-target.png": {
+      "size": [
+        1276,
+        1233
+      ],
+      "bytes": 2569615,
+      "sha256": "75370e2635658439a2067fe1585caca894d298fe3a700adb91403fbb321113f7",
+      "lower_jacket_mean_abs_rgb_difference": 0.0
+    },
+    "expression-eyes-closed.png": {
+      "size": [
+        1277,
+        1232
+      ],
+      "bytes": 2416993,
+      "sha256": "7250472ee29f9e1a0df8c3e839f848d7b92452a0737f652a00a4389833080180"
+    },
+    "expression-wink.png": {
+      "size": [
+        1276,
+        1233
+      ],
+      "bytes": 2429763,
+      "sha256": "02bc55df5444e9eae130638e882f85cce12dba7a38ac1cf05b6f4d84752c508f",
+      "lower_jacket_mean_abs_rgb_difference": 7.934
+    }
+  }
+}
