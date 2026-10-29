@@ -52,3 +52,12 @@ Screenshots include actual animation frames, the smallest checked viewport, and 
 ## Quality decision
 
 Adopt: the portrait's organic fur, eyes and leather remain intact while the face reacts, the motion is restrained, and entry/exit feel part of the existing window concept. The opening adds the intended welcome without altering the underlying design. Proceed with the user's authorized GitHub push and Cloudflare publication.
+
+## Production verification
+
+- Published 2026-10-29 from opening commit `5bb232d`.
+- Cloudflare Worker: `madomado-cafe`; version `576d6ab1-0758-4c77-9e1f-f37c7dd91cfe`.
+- Public URL: https://madomado-cafe.ur24-jp.workers.dev/
+- Actual public browser replay at desktop 1440×1000 and mobile 390×844 confirmed the animation and return to the original Hero. No horizontal overflow or console warnings/errors. The only remaining inert element is the original closed mobile navigation, as expected.
+- HTTP 200 confirmed; HTML robots meta and `X-Robots-Tag` retain `noindex, nofollow, noarchive`; original CSP remains present.
+- `production-desktop-*.png` and `production-mobile-*.png` are captures of the deployed site, including the mobile Hero after completion. Millisecond suffixes are capture times relative to navigation returning, not animation timestamps.
