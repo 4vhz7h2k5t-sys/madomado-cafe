@@ -1,0 +1,112 @@
+{
+  "food-aji": {
+    "src": "/menu/aji.webp",
+    "alt": "あじフライ定食のイメージ",
+    "caption": "生成イメージです。実際の盛り付け・内容とは異なります。"
+  },
+  "food-oyster": {
+    "src": "",
+    "alt": "カキフライ定食",
+    "caption": ""
+  },
+  "food-tonkatsu": {
+    "src": "",
+    "alt": "トンカツ定食",
+    "caption": ""
+  },
+  "food-ginger-pork": {
+    "src": "",
+    "alt": "しょうが焼き定食",
+    "caption": ""
+  },
+  "food-karaage": {
+    "src": "/images/meal.webp",
+    "alt": "からあげ定食",
+    "caption": "店舗の唐揚げ定食。取材記事掲載写真。"
+  },
+  "food-pork-steak": {
+    "src": "",
+    "alt": "ポークロースステーキ定食",
+    "caption": ""
+  },
+  "food-curry-udon": {
+    "src": "",
+    "alt": "カレーうどん定食",
+    "caption": ""
+  },
+  "food-katsu-curry": {
+    "src": "",
+    "alt": "カツカレーセット",
+    "caption": ""
+  },
+  "food-fries": {
+    "src": "",
+    "alt": "やみつきカリカリポテト",
+    "caption": ""
+  },
+  "food-snack-trio": {
+    "src": "",
+    "alt": "サクうま3兄弟",
+    "caption": ""
+  },
+  "sweets-plate": {
+    "src": "/menu/sweets.webp",
+    "alt": "気まぐれプレートのイメージ",
+    "caption": "生成イメージです。実際の盛り付け・内容とは異なります。"
+  },
+  "sweets-parfait": {
+    "src": "",
+    "alt": "パフェ",
+    "caption": ""
+  },
+  "sweets-float": {
+    "src": "",
+    "alt": "フロート",
+    "caption": ""
+  },
+  "sweets-affogato": {
+    "src": "",
+    "alt": "アフォガード",
+    "caption": ""
+  },
+  "sweets-ice-cream": {
+    "src": "",
+    "alt": "アイス 1個盛",
+    "caption": ""
+  },
+  "drinks-coffee": {
+    "src": "/menu/coffee.webp",
+    "alt": "コーヒーのイメージ",
+    "caption": "生成イメージです。実際の盛り付け・内容とは異なります。"
+  },
+  "drinks-cafe-au-lait": {
+    "src": "",
+    "alt": "カフェオレ",
+    "caption": ""
+  },
+  "drinks-camu-milk": {
+    "src": "",
+    "alt": "カムカムミルク",
+    "caption": ""
+  },
+  "drinks-blue-soda": {
+    "src": "",
+    "alt": "ブルーハワイソーダ",
+    "caption": ""
+  },
+  "drinks-melon-soda": {
+    "src": "",
+    "alt": "メロンソーダ",
+    "caption": ""
+  },
+  "drinks-soft-drinks": {
+    "src": "",
+    "alt": "ソフトドリンク",
+    "caption": ""
+  },
+  "drinks-alcohol": {
+    "src": "",
+    "alt": "アルコール",
+    "caption": ""
+  }
+}

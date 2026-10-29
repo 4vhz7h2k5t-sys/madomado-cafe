@@ -45,8 +45,14 @@ Research date: 2026-10-29 (Asia/Tokyo).
 | dogs.webp | Official Instagram public highlight thumbnail `773556272_18104942024466547_1133227894438625504_n.jpg`; only used as a small inset to preserve native image quality |
 | rider.webp | Official Instagram public post thumbnail `844917783_18112084226466547_3080258248536503993_n.jpg` |
 
-Photos are locally optimized WebP files; no external image hotlinks or generated substitute photographs of the store/food.
+Original store photographs are locally optimized WebP files with no external image hotlinks. Clearly labelled generated menu samples were added on 2026-10-30 as documented below.
 The header/footer credits identify source articles. All photo and brand rights remain with their respective owners. User authorization to build this demo does not confer a separate license for third-party reuse.
+
+## Menu image additions — 2026-10-30
+
+`public/menu/aji.webp`, `sweets.webp`, and `coffee.webp` are generated illustrative menu samples made with the built-in imagegen tool. They are not photographs of actual madomado cafe dishes and are labelled accordingly beside each image and in the credits. No other new menu images were generated. Original generated outputs remain in the local Codex generated-image library; optimized project assets are stored in this repository. `docs/menu-images.md` documents replacement with actual photographs.
+
+The existing `meal.webp` is also reused for the karaage menu dropdown with its original source attribution.
 
 ## Fonts
 

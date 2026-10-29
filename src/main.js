@@ -1,5 +1,7 @@
 import { mountOpening } from './opening';
 import './style.css';
+import './refinements.css';
+import { mountMenuPhotos } from './menu-photos';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -115,6 +117,8 @@ function wireTabs(tablist, onSelect) {
 wireTabs(document.querySelector('.menu-tabs'), tab => {
   document.querySelectorAll('.menu-panel').forEach(panel => { panel.hidden = panel.id !== tab.getAttribute('aria-controls'); });
 });
+
+mountMenuPhotos(() => ScrollTrigger.refresh());
 
 const seats = [
   { image: 'window', alt: '庭を正面に眺められる青い窓枠のカウンター席', label: 'THE WINDOW COUNTER', title: 'なにもしない、も。<br>いい時間。', description: '目の前には、季節を映す庭。ひとりでゆっくりごはんを食べたり、コーヒーを片手に外を眺めたり。大きな窓のカウンターは、この店らしさをいちばん近くに感じる席です。', note: 'おひとりでも、おふたりでも。' },

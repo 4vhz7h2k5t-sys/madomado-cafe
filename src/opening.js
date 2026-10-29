@@ -50,10 +50,11 @@ export async function mountOpening() {
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-label', 'madomado cafeへようこそ');
-  overlay.innerHTML = `<button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="m7 5 10 7-10 7Z"/><path d="M19 5v14"/></svg></button><div class="mm-opening-frame"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div><span class="mm-opening-welcome">WELCOME!</span><span class="mm-opening-light" aria-hidden="true"></span>`;
+  overlay.innerHTML = `<button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="m7 5 10 7-10 7Z"/><path d="M19 5v14"/></svg></button><div class="mm-opening-frame"><div class="mm-opening-viewport"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div></div><span class="mm-opening-welcome">WELCOME!</span><span class="mm-opening-light" aria-hidden="true"></span>`;
   const canvas = overlay.querySelector('canvas');
   const frame = overlay.querySelector('.mm-opening-frame');
   const welcome = overlay.querySelector('.mm-opening-welcome');
+  const viewport = overlay.querySelector('.mm-opening-viewport');
   const gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power', preserveDrawingBuffer: false });
   if (!gl) return;
   const previousFocus = document.activeElement;
@@ -88,13 +89,14 @@ export async function mountOpening() {
     animation?.kill();
     try { sessionStorage.setItem(key, 'seen'); } catch { /* No dependency on storage. */ }
     if (immediate) { cleanup(); return; }
-    const heroWindow = document.querySelector('.hero-window');
-    const rect = heroWindow?.getBoundingClientRect();
     const handoff = gsap.timeline({ onComplete: cleanup }); animation = handoff;
+    // Finish the portrait before revealing the Hero. Two differently shaped
+    // windows must never show through each other on a narrow viewport.
+    frame.style.transition = 'none';
     handoff.to(skip, { opacity: 0, duration: .1 }, 0);
     handoff.to(welcome, { opacity: 0, y: -6, duration: .18, ease: 'power2.in' }, 0);
-    if(rect && rect.width > 0) handoff.to(frame, { left: rect.left, top: rect.top, width: rect.width, height: rect.height, duration: .52, ease: 'power2.inOut' },0);
-    handoff.to(overlay, { opacity: 0, duration: .48, ease: 'power2.inOut' }, .06);
+    handoff.to(frame, { opacity: 0, y: -6, scale: .99, duration: .22, ease: 'power2.in' }, 0);
+    handoff.to(overlay, { opacity: 0, duration: .32, ease: 'power2.inOut' }, .22);
   }
   const mountedAt = performance.now();
   document.body.append(overlay);
@@ -119,7 +121,7 @@ export async function mountOpening() {
     if (disposed) return;
     images.forEach((im,i) => { const t=gl.createTexture();textures.push(t);gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);gl.uniform1i(gl.getUniformLocation(program,['portrait','closed','wink'][i]),i); });
     const uniforms = Object.fromEntries(['fit','time','blink','winking','enter','tilt','lookX','lookY'].map(n=>[n,gl.getUniformLocation(program,n)]));
-    const size = () => { const r=frame.getBoundingClientRect();const d=Math.min(devicePixelRatio,1.5);const w=Math.round(r.width*d),h=Math.round(r.height*d);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}gl.viewport(0,0,canvas.width,canvas.height);const aspect=r.width/r.height,source=images[0].width/images[0].height;gl.uniform2f(uniforms.fit,Math.min(1,aspect/source),Math.min(1,source/aspect)); };
+    const size = () => { const r={width:viewport.clientWidth,height:viewport.clientHeight};const d=Math.min(devicePixelRatio,1.5);const w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}gl.viewport(0,0,canvas.width,canvas.height);const aspect=r.width/r.height,source=images[0].width/images[0].height;gl.uniform2f(uniforms.fit,Math.min(1,aspect/source),Math.min(1,source/aspect)); };
     size(); started=performance.now(); overlay.classList.add('is-ready');
     const draw = now => { if(disposed)return;size();state.time=(now-started)/1000;state.lookX+=(pointerX-state.lookX)*.04;state.lookY+=(pointerY-state.lookY)*.04;for(const [key,value] of Object.entries(state))gl.uniform1f(uniforms[key],value);const expression=state.blink>.75?'blink':state.winking>.75?'wink':'smile';if(overlay.dataset.expression!==expression)overlay.dataset.expression=expression;gl.drawArrays(gl.TRIANGLES,0,6);raf=requestAnimationFrame(draw); };
     raf=requestAnimationFrame(draw);
