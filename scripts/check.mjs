@@ -1,0 +1,18 @@
+import {readFile, access, stat, readdir} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const html=await readFile('index.html','utf8');
+assert.match(html,/<html lang="ja">/);
+assert.match(html,/<meta name="robots" content="noindex, nofollow, noarchive"/);
+assert.equal((html.match(/<h1[ >]/g)||[]).length,1,'Exactly one primary heading');
+const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(new Set(ids).size,ids.length,'Unique element IDs');
+for(const match of html.matchAll(/href="#([^"]+)"/g))assert(ids.includes(match[1]),`Anchor target #${match[1]}`);
+for(const match of html.matchAll(/(?:src|href)="(\/(?!\/)[^"?#]+)"/g))await access(match[1].startsWith('/src/')?`.${match[1]}`:`public${match[1]}`);
+for(const match of html.matchAll(/aria-(?:controls|labelledby)="([^"]+)"/g))for(const id of match[1].split(' '))assert(ids.includes(id),`ARIA target ${id}`);
+assert.match(await readFile('public/robots.txt','utf8'),/Disallow: \//);
+assert.match(await readFile('public/_headers','utf8'),/X-Robots-Tag: noindex, nofollow, noarchive/);
+assert.match(html,/非公式の自主制作デモサイト/);
+assert.match(html,/tel:09056991207/);
+assert.match(html,/maps\/dir\/\?api=1/);
+for(const item of await readdir('public/images'))assert((await stat(`public/images/${item}`)).size<900000,`${item} image budget`);
+console.log('PASS: assets, anchors, unique IDs, ARIA references, Japanese metadata, noindex, demo disclosure, contact links and image budgets.');

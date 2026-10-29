@@ -1,0 +1,6 @@
+{
+  "name": "madomado-cafe", "version": "1.0.0", "private": true, "type": "module",
+  "scripts": {"dev":"vite --host 127.0.0.1", "build":"vite build", "preview":"vite preview --host 127.0.0.1", "deploy":"npm run build && wrangler deploy", "check":"node scripts/check.mjs"},
+  "dependencies": {"gsap":"^3.13.0"},
+  "devDependencies": {"vite":"^7.1.0", "wrangler":"^4.40.0"}
+}
