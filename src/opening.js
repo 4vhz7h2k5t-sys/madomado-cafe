@@ -50,9 +50,10 @@ export async function mountOpening() {
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-label', 'madomado cafeへようこそ');
-  overlay.innerHTML = `<button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="m7 5 10 7-10 7Z"/><path d="M19 5v14"/></svg></button><div class="mm-opening-frame"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div><span class="mm-opening-light" aria-hidden="true"></span>`;
+  overlay.innerHTML = `<button class="mm-opening-skip" type="button" aria-label="オープニングをスキップ"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="m7 5 10 7-10 7Z"/><path d="M19 5v14"/></svg></button><div class="mm-opening-frame"><canvas class="mm-opening-canvas" aria-hidden="true"></canvas><span class="mm-opening-reflection" aria-hidden="true"></span><span class="mm-opening-sill" aria-hidden="true"></span></div><span class="mm-opening-welcome">WELCOME!</span><span class="mm-opening-light" aria-hidden="true"></span>`;
   const canvas = overlay.querySelector('canvas');
   const frame = overlay.querySelector('.mm-opening-frame');
+  const welcome = overlay.querySelector('.mm-opening-welcome');
   const gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power', preserveDrawingBuffer: false });
   if (!gl) return;
   const previousFocus = document.activeElement;
@@ -82,7 +83,7 @@ export async function mountOpening() {
     textures.forEach(t => gl.deleteTexture(t)); if(buffer)gl.deleteBuffer(buffer); if(program)gl.deleteProgram(program);
   }
   function finish(immediate = false) {
-    if (disposed || exiting) return;
+    if (disposed || (exiting && !immediate)) return;
     exiting = true;
     animation?.kill();
     try { sessionStorage.setItem(key, 'seen'); } catch { /* No dependency on storage. */ }
@@ -90,16 +91,18 @@ export async function mountOpening() {
     const heroWindow = document.querySelector('.hero-window');
     const rect = heroWindow?.getBoundingClientRect();
     const handoff = gsap.timeline({ onComplete: cleanup }); animation = handoff;
-    handoff.to(skip, { opacity: 0, duration: .18 }, 0);
-    if(rect && rect.width > 0) handoff.to(frame, { left: rect.left, top: rect.top, width: rect.width, height: rect.height, duration: .65, ease: 'power2.inOut' },0);
-    handoff.to(overlay, { opacity: 0, duration: .68, ease: 'power2.inOut' }, .12);
+    handoff.to(skip, { opacity: 0, duration: .1 }, 0);
+    handoff.to(welcome, { opacity: 0, y: -6, duration: .18, ease: 'power2.in' }, 0);
+    if(rect && rect.width > 0) handoff.to(frame, { left: rect.left, top: rect.top, width: rect.width, height: rect.height, duration: .52, ease: 'power2.inOut' },0);
+    handoff.to(overlay, { opacity: 0, duration: .48, ease: 'power2.inOut' }, .06);
   }
+  const mountedAt = performance.now();
   document.body.append(overlay);
   inertState.forEach(([el]) => { el.inert = true; });
   const skip = overlay.querySelector('button'); skip.addEventListener('click', onSkip); skip.focus({ preventScroll: true });
   window.addEventListener('keydown', onKey); window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', onResize); window.addEventListener('hashchange', onSkip);
   overlay.addEventListener('pointermove', onPointer); overlay.addEventListener('wheel',onSkip,{passive:true}); overlay.addEventListener('touchmove',onSkip,{passive:true}); document.addEventListener('visibilitychange', onVisibility); reduce.addEventListener('change', onSkip); canvas.addEventListener('webglcontextlost',onSkip);
-  watchdog = setTimeout(() => finish(true), 6200);
+  watchdog = setTimeout(() => finish(true), 2500);
   function shader(type, source) {
     const s = gl.createShader(type); gl.shaderSource(s, source); gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { const message=gl.getShaderInfoLog(s);gl.deleteShader(s);throw new Error(message); } return s;
@@ -112,7 +115,7 @@ export async function mountOpening() {
     const a = gl.getAttribLocation(program,'p'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
     const load = src => new Promise((resolve,reject) => { const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src; });
     let loadDeadline;
-    const images = await Promise.race([Promise.all(['/opening/welcome.webp','/opening/blink.webp','/opening/wink.webp'].map(load)),new Promise((_,reject)=>{loadDeadline=setTimeout(()=>reject(new Error('Opening load deadline')),1600);})]).finally(()=>clearTimeout(loadDeadline));
+    const images = await Promise.race([Promise.all(['/opening/welcome.webp','/opening/blink.webp','/opening/wink.webp'].map(load)),new Promise((_,reject)=>{loadDeadline=setTimeout(()=>reject(new Error('Opening load deadline')),600);})]).finally(()=>clearTimeout(loadDeadline));
     if (disposed) return;
     images.forEach((im,i) => { const t=gl.createTexture();textures.push(t);gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);gl.uniform1i(gl.getUniformLocation(program,['portrait','closed','wink'][i]),i); });
     const uniforms = Object.fromEntries(['fit','time','blink','winking','enter','tilt','lookX','lookY'].map(n=>[n,gl.getUniformLocation(program,n)]));
@@ -121,12 +124,17 @@ export async function mountOpening() {
     const draw = now => { if(disposed)return;size();state.time=(now-started)/1000;state.lookX+=(pointerX-state.lookX)*.04;state.lookY+=(pointerY-state.lookY)*.04;for(const [key,value] of Object.entries(state))gl.uniform1f(uniforms[key],value);const expression=state.blink>.75?'blink':state.winking>.75?'wink':'smile';if(overlay.dataset.expression!==expression)overlay.dataset.expression=expression;gl.drawArrays(gl.TRIANGLES,0,6);raf=requestAnimationFrame(draw); };
     raf=requestAnimationFrame(draw);
     animation=gsap.timeline({ onComplete:()=>finish(false) });
-    animation.to(state,{enter:1,tilt:.006,duration:1.15,ease:'power3.out'},0)
-      .fromTo(frame,{y:32,scale:.975},{y:0,scale:1,duration:1.25,ease:'power3.out'},0)
-      .to(state,{blink:1,duration:.095,ease:'power2.in'},1.05).to(state,{blink:0,duration:.16,ease:'power2.out'},1.145)
-      .to(state,{tilt:-.018,duration:.7,ease:'sine.inOut'},1.5)
-      .to(state,{winking:1,duration:.18,ease:'power2.inOut'},2.24).to(state,{winking:0,duration:.28,ease:'power2.out'},2.68)
-      .to(state,{tilt:0,duration:.7,ease:'sine.inOut'},2.9)
-      .to({}, {duration:.4},3.45);
+    animation.to(state,{enter:1,tilt:.006,duration:.6,ease:'power3.out'},0)
+      .fromTo(frame,{y:18,scale:.985},{y:0,scale:1,duration:.68,ease:'power3.out'},0)
+      .fromTo(welcome,{y:10,rotation:-5,opacity:0},{y:0,rotation:-2,opacity:1,duration:.4,ease:'power3.out'},.14)
+      .to(state,{blink:1,duration:.07,ease:'power2.in'},.43).to(state,{blink:0,duration:.11,ease:'power2.out'},.5)
+      .to(state,{tilt:-.018,duration:.38,ease:'sine.inOut'},.63)
+      .to(state,{winking:1,duration:.125,ease:'power2.inOut'},.98).to(state,{winking:0,duration:.18,ease:'power2.out'},1.2)
+      .to(state,{tilt:0,duration:.3,ease:'sine.inOut'},1.28)
+      .to({}, {duration:.14},1.58);
+    // Keep the handoff's full 0.54s; absorb modest asset-loading latency in
+    // the welcome itself, so the whole visible opening stays near 2.35s.
+    const welcomeBudget = Math.max(1, Math.min(1.72, 2.35 - (performance.now() - mountedAt) / 1000 - .54));
+    animation.timeScale(1.72 / welcomeBudget);
   } catch { cleanup(); }
 }

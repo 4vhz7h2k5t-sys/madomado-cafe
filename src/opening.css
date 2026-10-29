@@ -60,7 +60,25 @@
 
 .mm-opening.is-ready .mm-opening-frame {
   opacity: 1;
-  transition: opacity .5s;
+  transition: opacity .28s;
+}
+
+.mm-opening-welcome {
+  position: absolute;
+  top: calc((100% + var(--portrait-height)) / 2 + 14px);
+  left: 50%;
+  width: max-content;
+  translate: -50% 0;
+  text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(25px, 3.8vw, 38px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .06em;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .mm-opening-canvas {

@@ -2,7 +2,7 @@
 
 ## Adopted direction
 
-A short, quiet, text-free welcome through a centered blue window with a shallow arch, followed by a dissolve into the existing Hero window. The initial copy and logo were removed in the mobile revision below. Duration is about 4.65 seconds after the artwork loads. No audio, external media services, new packages or real 3D model are involved. The three approved raster illustrations are used in a WebGL 2.5D performance.
+A short welcome through a centered blue window with a shallow arch, accompanied only by WELCOME!, followed by a dissolve into the existing Hero window. Current timing is 1.72 seconds of greeting plus a 0.54-second handoff (2.26 seconds after cached artwork setup); modest loading latency is absorbed to target about 2.35 seconds from overlay mounting. Prior revisions are recorded below. No audio, external media services, new packages or real 3D model are involved. The three approved raster illustrations are used in a WebGL 2.5D performance.
 
 The base portrait remains fixed at the pixel/material level. Only soft masks around the eyes sample the blink/wink photographs. A shader produces small anatomically localized deformations for breathing, ears, paws, head tilt and pointer-responsive gaze. During a blink, the open-eye texture compresses before the closed-eye texture appears; clothing is never swapped between the three source images.
 
@@ -26,7 +26,7 @@ The blue arch echoes the Hero. On departure, its bounds animate to the real, rea
 - Visible Skip button, Escape, Enter, Space, scrolling/navigation keys, wheel or touch scrolling can dismiss it.
 - Existing elements are temporarily inert; their previous states are restored on all termination paths. Focus remains in the welcome while it is active.
 - Hidden tab, layout-width change, preference change or GPU context loss also remove it. Height-only changes keep the opening active so mobile browser chrome does not dismiss it.
-- Shader/image failures show the normal site. Image-loading deadline: 1.6 seconds; independent cleanup watchdog: 6.2 seconds.
+- Shader/image failures show the normal site. Image-loading deadline: 0.6 seconds; independent cleanup watchdog: 2.5 seconds. Immediate dismissal can also interrupt an in-progress handoff.
 - Pixel ratio capped at 1.5; requestAnimationFrame and GPU resources are released on removal.
 - All assets are served locally and comply with the existing CSP/noindex.
 
@@ -75,3 +75,16 @@ User feedback: remove opening text and correct the mobile composition.
 - Height changed from 844 to 760 at fixed width 390 during the opening: it remained active. Icon skip then dismissed it and restored the site.
 - `node --check src/opening.js`, `npm run check`, `npm run build`, and `git diff --check` passed.
 - `textless-*.png` are actual captures from this revision, including mobile Hero after completion. Physical iOS/Android browser testing was not performed.
+
+
+## Short welcome revision — 2026-10-29
+
+User request: about 2–2.5 seconds including the Hero handoff, with WELCOME! as the only visible copy.
+
+- Retimed entrance (0.68s), blink (0.43s), head tilt and wink (0.98–1.38s). Greeting settles at 1.58s with a short 0.14s hold before the 0.54s Hero dissolve. Fur, leather, eye textures and localized deformation remain unchanged.
+- WELCOME! appears gently beneath the window at 0.14s and fades before the handoff; no other copy or logo was reintroduced. Sized and centered independently to remain within compact landscape viewports.
+- Asset loading no longer creates a long introduction: 600ms load deadline, latency-aware welcome timing and 2500ms independent cleanup. Slow/unavailable artwork falls through to the original site.
+- Actual built-preview Chromium checks (navigation through full Hero return, measured by DOM polling): 1440×1000 **2432ms**, 390×844 **2417ms**, 320×568 **2330ms**, 844×390 **2382ms**. These are observed upper bounds including navigation/API polling overhead, not frame-accurate profiling. All sizes showed WELCOME! without overflow; blink and wink were observed in the animation.
+- Icon skip restored the original inert state; reduced-motion route bypassed the opening; console had no errors or warnings.
+- Only `src/opening.js` and `src/opening.css` changed relative to `9827dc7`, besides this verification record/screenshots. `index.html`, `src/main.js`, `src/style.css`, Hero assets and every other section are unchanged.
+- `node --check src/opening.js`, `npm run check`, `npm run build`, `git diff --check` passed. `tempo-*.png` are actual final-build frames at the four tested sizes.
