@@ -67,7 +67,7 @@ motion.add({ mobile: '(max-width: 760px)', desktop: '(min-width: 761px)', reduce
     .to('.hero-window', { left: '0%', top: '0%', width: '100%', height: '100%', borderRadius: '0%', borderWidth: 0, duration: .85 }, .05)
     .to('.hero-image', { scale: 1.005, filter: 'brightness(.68)', duration: .8 }, .1)
     .to('.hero-garden', { opacity: 1, duration: .45 }, .4)
-    .to('.window-mullions, .window-caption', { opacity: 0, duration: .3 }, .1)
+    .to('.window-caption', { opacity: 0, duration: .3 }, .1)
     .to('.sun-stamp', { rotation: 100, x: mobile ? 120 : 180, opacity: 0, duration: .5 }, .03)
     .to('.hero-arrival', { opacity: 1, y: -12, duration: .25 }, .68);
 
